@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import PP Neue Corp font */
+@font-face {
+  font-family: "PP Neue Corp";
+  src: url("https://cdn.prod.website-files.com/6717aac16c9ea22eeef1e79e/6717de2d56e40b921572d2d9_PPNeueCorp-TightUltrabold.woff2")
+    format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Custom properties for consistency with original CSS */
+:root {
+  --color-black: #000;
+  --color-light: #fff;
+  --color-dark: #000;
+  --color-neutral-900: #1a1a1a;
+  --container-padding: 4em;
+  --size-font: 1.1vw;
+  --cubic-default: cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+/* Base styles from original CSS */
+body {
+  background-color: var(--color-black);
+  color: var(--color-light);
+  font-size: var(--size-font);
+}
+
+/* Specific styles that are hard to replicate purely with Tailwind or need direct application */
+.button:hover .button-overlay {
+  transform: scale(1.4);
+}
+
+.overlay-nav-row:hover:has(.button:hover) .button {
+  opacity: 0.4;
+}
+
+.button:hover {
+  transform: scale(0.85);
+  opacity: 1 !important;
+}
+
+/* Slider active state, controlled by JS adding/removing 'active' class */
+[data-slider="slide"] {
+  opacity: 0.2;
+}
+[data-slider="slide"].active {
+  opacity: 1;
+}
+
+/* Smoky Glow Effect */
+.overlay {
+  position: relative; /* Ensure pseudo-element is positioned relative to this */
+}
+
+.overlay::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10em; /* Adjust width for the glow */
+  height: 100%;
+  background: radial-gradient(
+    circle at right,
+    rgba(255, 255, 255, 0.1) 0% /* Subtle white glow */,
+    transparent 70% /* Fades out */
+  );
+  filter: blur(20px); /* Smoky blur effect */
+  pointer-events: none; /* Ensure it doesn't block clicks */
+  z-index: 1; /* Below the overlay-inner content but above main slider */
+}
