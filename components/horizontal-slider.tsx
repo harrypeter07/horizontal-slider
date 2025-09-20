@@ -48,7 +48,9 @@ export default function HorizontalSlider() {
     const slides = slideRefs.current.filter(Boolean) as HTMLElement[]
     if (slides.length === 0) return
 
-    const ctx = gsap.context(() => {
+    let ctx: gsap.Context
+
+    ctx = gsap.context(() => {
       // Utility function to find the closest index in an array of values
       const getClosest = (values: number[], value: number, wrap: number) => {
         let i = values.length,
@@ -327,13 +329,6 @@ export default function HorizontalSlider() {
       lastIndex = curIndex
       onChange && onChange(slides[curIndex], curIndex)
 
-      // Cleanup for event listeners and resize
-      ctx.add(() => {
-        window.removeEventListener("resize", onResize)
-        if (nextButton) nextButton.removeEventListener("click", handleNextClick)
-        if (prevButton) prevButton.removeEventListener("click", handlePrevClick)
-        slides.forEach((slide, i) => slide.removeEventListener("click", handleSlideClick(i)))
-      })
     }, sliderListRef) // Target the main container for the context
 
     // Update total slides text
@@ -359,13 +354,20 @@ export default function HorizontalSlider() {
       ) as HTMLElement[]
     }
 
-    return () => ctx.revert() // Cleanup GSAP context on unmount
+    // Cleanup function
+    return () => {
+      ctx.revert() // Cleanup GSAP context on unmount
+      window.removeEventListener("resize", onResize)
+      if (nextButton) nextButton.removeEventListener("click", handleNextClick)
+      if (prevButton) prevButton.removeEventListener("click", handlePrevClick)
+      slides.forEach((slide, i) => slide.removeEventListener("click", handleSlideClick(i)))
+    }
   }, [totalSlides]) // Dependencies: totalSlides is static, so this runs once.
 
   return (
-    <section className="cloneable relative flex min-h-screen items-center justify-center bg-black p-4em text-light text-1-1vw">
+    <section className="cloneable relative flex min-h-screen items-start justify-start bg-black p-4em text-light text-1-1vw">
       <div className="main absolute inset-0 z-0 h-full w-full overflow-hidden">
-        <div className="slider-wrap flex h-full w-full items-center justify-start">
+        <div className="slider-wrap flex h-full w-full items-start justify-start">
           <div
             ref={sliderListRef}
             data-slider="list"
@@ -397,8 +399,8 @@ export default function HorizontalSlider() {
         </div>
       </div>
 
-      <div className="overlay absolute inset-0 left-0 z-20 flex h-full w-37-5em items-center justify-start bg-gradient-to-r from-neutral-900 from-85% to-transparent pl-2em">
-        <div className="overlay-inner flex h-28-125em flex-col items-start justify-between">
+      <div className="overlay absolute inset-0 left-0 z-20 flex h-full w-37-5em items-start justify-start bg-gradient-to-r from-neutral-900 from-85% to-transparent pl-2em pt-2em">
+        <div className="overlay-inner flex h-28-125em flex-col items-start justify-start gap-2em">
           <div className="overlay-count-row flex flex-row items-center justify-start gap-0-2em font-pp-neue-corp text-5-625em font-bold">
             <div ref={stepElementsParentRef} className="count-column h-1em overflow-hidden">
               {/* Dynamic steps will be rendered here by JS */}
